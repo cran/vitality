@@ -14,6 +14,5 @@
   returns -1 if no value satisfies the condition
 }
 \description{
-  None
-}
+  For use in the primary vitality model fitting functions in this package. See package documentation.}
 

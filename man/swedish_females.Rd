@@ -7,9 +7,8 @@
   Human Mortality Database
 }
 \description{
-  Period mortality data for Swedish females experiencing
-  mortality in the year 2000. Columns follow standard
-  life-table naming conventions.
+  Period life table for Swedish females in the year 2000. 
+  Columns follow standard life-table naming conventions.
 }
 \keyword{datasets}
 

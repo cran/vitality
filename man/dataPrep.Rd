@@ -26,7 +26,8 @@
   x1, x2, Ni (incremental survival fraction), rc.data.
 }
 \description{
-  Function to deal with NAs, right truncated data and
-  datatype cumulative survival or incremental motality.
+  Function to deal with NAs, right truncated data, and
+  datatype (i.e. cumulative survival or incremental motality).
 }
+\details{This function is designed for use in the primary vitality model fitting functions in this package. See package documentation.}
 

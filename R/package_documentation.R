@@ -1,7 +1,7 @@
 #' Fitting routines for the Vitality family of mortality models.
 #'
 #' This package provides support for fitting models in the vitality family of mortality models.
-#' Currently, the 4-parameter 2-process model is included, but planned updates will
+#' Currently, the 4-parameter and 6paramter 2-process models are included, but planned updates will
 #' include all published versions of the models, as well as Bayesian parameter estimation routines.
 #' 
 #' Support developing this package  was provided to J. Anderson by Bonneville Power Administration
