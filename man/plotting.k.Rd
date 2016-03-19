@@ -14,7 +14,7 @@
 
   \item{mlv}{TODO mlv}
 
-  \item{time}{time vector giving the ages at which calcualte the estimated value}
+  \item{time}{time vector giving the ages at which calculate the estimated value}
 
   \item{sfract}{observed survival fraction}
 
@@ -36,7 +36,7 @@
   
   \item{gfit}{Provides a Pearson C type test for goodness of fit. Default is \code{FALSE}. Must provide the initial study population to compute goodness of fit.}
 
-  \item{rc.data}{Booolean, right-censored data?}
+  \item{rc.data}{Boolean, right-censored data?}
 }
 \description{
   This function plots the estimated results from the 3 parameter vitality model. It is used within the function \code{\link{vitality.k}}. 

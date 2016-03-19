@@ -15,7 +15,7 @@ vitality.ku(time, sdata, rc.data=F, se=F, gfit=F, datatype="CUM", ttol=.000001,
   option: datatype = "INC". The default also expects the data to represent full mortality. 
   Otherwise, use option: rc.data = T to indicate right censored data.}
 
-  \item{rc.data}{Optional, boolean. Specifies Right
+  \item{rc.data}{Optional, Boolean. Specifies Right
   Censored data.  If the data does not represent full
   mortality, it is probably right censored.  The default is
   rc.data = F.  A third option is rc.data = "TF".  Use this
@@ -24,7 +24,7 @@ vitality.ku(time, sdata, rc.data=F, se=F, gfit=F, datatype="CUM", ttol=.000001,
   If rc.data = F but the data does not show full mortality,
   rc.data = "TF" will be invoked automatically.}
 
-  \item{se}{Optional, boolean. Calculates the standard
+  \item{se}{Optional, Boolean. Calculates the standard
   errors for the MLE parameters.  Default is FALSE. Set
   equal to the initial study population to compute standard
   errors.}
@@ -35,22 +35,22 @@ vitality.ku(time, sdata, rc.data=F, se=F, gfit=F, datatype="CUM", ttol=.000001,
 
   \item{ttol}{Optional. Stopping criteria tolerance.
   Default is 1e-6.  Specify as ttol = .0001. If one of the
-  liklihood plots (esp. for "k") does not look optimal, try
+  likelihood plots (esp. for "k") does not look optimal, try
   decreasing ttol.  If the program crashes, try increasing
   ttol.}
 
   \item{init.params}{Optional. Please specify the initial
   param values.  specify \code{init.params =} \code{c(r, s,
-  k, u)} in that order (eg. init.params = c(.1,
+  k, u)} in that order (e.g.. init.params = c(.1,
   .02, .3, .25)).}
   
-  \item{lower}{vector of lower paramter bounds in order of \code{c(r, s,
+  \item{lower}{vector of lower parameter bounds in order of \code{c(r, s,
   k, u)}. see \code{\link{nlminb}}}
   
-  \item{upper}{vector of upper paramter bounds in order of \code{c(r, s,
+  \item{upper}{vector of upper parameter bounds in order of \code{c(r, s,
   k, u)}. see \code{\link{nlminb}}}
 
-  \item{pplot}{Optional, boolean. Plots of cumulative
+  \item{pplot}{Optional, Boolean. Plots of cumulative
   survival for both data and fitted curves?  Default:
   \code{TRUE}. \code{FALSE} produces no plots. Note: the incremental mortality plot is a continuous
   representation of the appropriately binned histogram of
@@ -60,13 +60,13 @@ vitality.ku(time, sdata, rc.data=F, se=F, gfit=F, datatype="CUM", ttol=.000001,
 
   \item{lplot}{Boolean. Plot likelihood functions? Provides likelihood function plotting. Defaults to \code{FALSE}. Note:  these plots are not "likelihood profiles" in that while one parameter is varied, the others are held fixed, rather than re-optimized. (must also have pplot=T.)}
   
-  \item{cplot}{Boolean. Plot likelihood contour plot? Provides a likelihood contour plot for a range of paramter values (can be slow so default is \code{FALSE}). Must also have \code{lplot=T} and \code{pplot=T} to get contour plots.}
+  \item{cplot}{Boolean. Plot likelihood contour plot? Provides a likelihood contour plot for a range of parameter values (can be slow so default is \code{FALSE}). Must also have \code{lplot=T} and \code{pplot=T} to get contour plots.}
 
   \item{tlab}{Character, label for time axis. Defaults to "days".}
   
   \item{gfit}{Provides a Pearson C type test for goodness of fit. Default is \code{FALSE}. Must provide the initial study population to compute goodness of fit.}
 
-  \item{silent}{Optional, boolean. Stops all print and plot
+  \item{silent}{Optional, Boolean. Stops all print and plot
   options (still get most warning and all error messages)
   Default is \code{FALSE}.}
   
@@ -84,4 +84,25 @@ This function provides the fitting routine for the 4-parameter vitality model. I
   \item Li, T. and J.J. Anderson. (2009). "The vitality model: A way to understand population survival and demographic heterogeneity." Theoretical Population Biology 76: 118-131.
   }
 }
+\examples{
+data(rainbow_trout_for_k)
+time <- rainbow_trout_for_k$days
+survival_fraction <- rainbow_trout_for_k$survival
 
+results.modku <- vitality.ku(time = time,
+                             sdata = survival_fraction,
+                             rc.data=TRUE,
+                             se=FALSE,
+                             gfit=FALSE,
+                             datatype="CUM",
+                             ttol=.000001,
+                             init.params=FALSE,
+                             lower=c(0,-1,0,0),upper=c(100,100,50,50),
+                             pplot=TRUE,
+                             tlab="days",
+                             lplot=TRUE,
+                             cplot=TRUE,
+                             Iplot=TRUE,
+                             silent=FALSE,
+                             L=0)
+}

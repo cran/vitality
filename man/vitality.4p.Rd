@@ -16,9 +16,10 @@
   providing incremental mortality fraction instead, use
   option: datatype = "INC".  The default also expects the
   data to represent full mortality.  Otherwise, use option:
-  rc.data = T to indicate right censored data.}
+  rc.data = T to indicate right censored data. If first element of \code{sdata}
+  <1 data will be rescaled.}
 
-  \item{rc.data}{Optional, boolean. Specifies Right
+  \item{rc.data}{Optional, Boolean. Specifies Right
   Censored data.  If the data does not represent full
   mortality, it is probably right censored.  The default is
   rc.data = F.  A third option is rc.data = "TF".  Use this
@@ -27,7 +28,7 @@
   If rc.data = F but the data does not show full mortality,
   rc.data = "TF" will be invoked automatically.}
 
-  \item{se}{Optional, boolean. Calculates the standard
+  \item{se}{Optional, Boolean. Calculates the standard
   errors for the MLE parameters.  Default is FALSE. Set
   equal to the initial study population to compute standard
   errors.}
@@ -38,22 +39,22 @@
 
   \item{ttol}{Optional. Stopping criteria tolerance.
   Default is 1e-6.  Specify as ttol = .0001. If one of the
-  liklihood plots (esp. for "k") does not look optimal, try
+  likelihood plots (esp. for "k") does not look optimal, try
   decreasing ttol.  If the program crashes, try increasing
   ttol.}
 
   \item{init.params}{Optional. Please specify the initial
   param values.  
-  specify \code{init.params =} \code{c(r, s, lambda, beta)} in that order (eg. init.params = c(.1,
+  specify \code{init.params =} \code{c(r, s, lambda, beta)} in that order (e.g.. init.params = c(.1,
   .02, .3, 0.12)).}
   
-  \item{lower}{vector of lower paramter bounds in order of \code{c(r, s,
+  \item{lower}{vector of lower parameter bounds in order of \code{c(r, s,
   lambda, beta)}. see \code{\link{nlminb}}}
   
-  \item{upper}{vector of upper paramter bounds in order of \code{c(r, s,
+  \item{upper}{vector of upper parameter bounds in order of \code{c(r, s,
   lambda, beta)}. see \code{\link{nlminb}}}
 
-  \item{pplot}{Optional, boolean. Plots of cumulative
+  \item{pplot}{Optional, Boolean. Plots of cumulative
   survival for both data and fitted curves?  Default
   \code{TRUE}. \code{FALSE} Produce no plots. A A third
   option: \code{pplot = n} (n >= 1) extends the time axis
@@ -63,16 +64,16 @@
   representation of the appropriately- binned histogram of
   incremental mortalities.}
 
-  \item{Iplot}{Optional, boolean. Incremental mortality for
+  \item{Iplot}{Optional, Boolean. Incremental mortality for
   both data and fitted curves?  Default: \code{FALSE}.}
 
-  \item{Mplot}{Optional, boolean. Plot fitted mortality
+  \item{Mplot}{Optional, Boolean. Plot fitted mortality
   curve? Default is \code{FALSE}. If \code{TRUE} 'observed' mortality rates for plotting are approximate and estimated from the input survival data. Depending on time (ages) and the change in mortality over age, these may be unrealistic but the fitted lines are derived from the parameter estimates themselves. For human data, the approximated mortality rates diverge at ages >80. \code{pplot} must be set to TRUE and \code{Iplot=FALSE}.}
 
   \item{tlab}{Optional, character. specifies units for
   x-axis of plots.  Default is "days".}
 
-  \item{silent}{Optional, boolean. Stops all print and plot
+  \item{silent}{Optional, Boolean. Stops all print and plot
   options (still get most warning and all error messages)
   Default is \code{FALSE}.  A third option,
   \code{"verbose"} also enables the trace setting in the ms
@@ -92,6 +93,31 @@ This function provides the fitting routine for the 4-parameter 2-process vitalit
   
   Li, T. and J.J. Anderson (2013).
   "Shaping human mortality patterns through intrinsic and
-  extrinsiv vitality processes."  Demographic Research 28(12): 341-372.
+  extrinsic vitality processes."  Demographic Research 28(12): 341-372.
+}
+
+\examples{
+data(swedish_females)
+swe <- swedish_females
+initial_age <- 20 # Could be adjusted
+time <- initial_age:max(swedish_females$age)
+survival_fraction <- swe$lx / swe$lx[1]
+survival_fraction <- survival_fraction[time] # when first element <1 data is adjusted
+sample_size <- swe$Lx[initial_age] #sample size
+
+results.4par <- vitality.4p(time = time,
+                            sdata = survival_fraction,
+                            #init.params=FALSE,
+                            init.params=c(0.012, 0.01, 0.1, 0.1),
+                            lower = c(0, 0, 0, 0), upper = c(100,50,1,50),
+                            rc.data = TRUE, 
+                            se = sample_size, 
+                            datatype = "CUM", 
+                            ttol = 1e-06,
+                            pplot = TRUE,
+                            Iplot = TRUE,
+                            Mplot = TRUE,
+                            tlab = "years",
+                            silent = FALSE)
 }
 

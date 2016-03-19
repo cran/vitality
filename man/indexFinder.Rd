@@ -5,9 +5,9 @@
   indexFinder(x, val)
 }
 \arguments{
-  \item{x}{Vector to serach}
+  \item{x}{Vector to search}
 
-  \item{val}{Threshhold}
+  \item{val}{Threshold}
 }
 \value{
   Gives the index of the first value of x that is <= val.

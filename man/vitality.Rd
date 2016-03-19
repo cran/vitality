@@ -16,15 +16,17 @@ This package provides support for fitting the vitality family of mortality model
 Model parameters are estimated on survival or mortality rate data using maximum log likelihood methods based on Salinger et al. (2003). 
 
 Version 1.1 adds the versions \code{\link{vitality.k}}, \code{\link{vitality.ku}} and \code{\link{vitality.6p}} to the original code for the \code{\link{vitality.4p}} model previously designated vitality.2ps.
+
+Version 1.2 makes previously invisible functions to produce the survival and mortality rate functions from a given set of parameters (e.g. \code{\link{SurvFn.4p}}, \code{\link{SurvFn.6p}}, \code{\link{mu.vd.4p}}, \code{\link{mu.vd.6p}}) usable. The child mortality rate formula in \code{\link{mu.vd.6p}}, \code{\link{mu.vd2.6p}}, and \code{\link{mu.vd4.6p}} has been updated to improve fit.
 }
 \details{
-Support for package development was provided by the National Institute of Ageing Grant 1R21AG046760-01, the Bonneville Power Administration, and the University of Washington Centers for Statistics and the Social Sciences and Studies in Demography and Ecology.
+Support for package development was provided by the National Institute of Ageing Grant 1R21AG046760-01, the Bonneville Power Administration, and the University of Washington Center for Statistics and the Social Sciences and Center for Studies in Demography and Ecology.
 }
 \examples{
 # vitality.k
-data(rainbow_trout_for_k)
-time <- rainbow_trout_for_k$days
-survival_fraction <- rainbow_trout_for_k$survival
+data(daphnia)
+time <- daphnia$days
+survival_fraction <- daphnia$lx
 
 results.modk <- vitality.k(time = time,
                            sdata = survival_fraction,
@@ -35,11 +37,11 @@ results.modk <- vitality.k(time = time,
                            ttol=.000001, 
                            init.params=FALSE, 
                            lower=c(0,-1,0), upper=c(100,50,50), 
-                           pplot=FALSE, 
+                           pplot=TRUE, 
                            tlab="days", 
-                           lplot=FALSE, 
-                           cplot=FALSE, 
-                           Iplot=FALSE, 
+                           lplot=TRUE, 
+                           cplot=TRUE, 
+                           Iplot=TRUE, 
                            silent=TRUE)
 
 # vitality.ku
@@ -56,19 +58,20 @@ results.modku <- vitality.ku(time = time,
                              ttol=.000001,
                              init.params=FALSE,
                              lower=c(0,-1,0,0),upper=c(100,100,50,50),
-                             pplot=FALSE,
+                             pplot=TRUE,
                              tlab="days",
-                             lplot=FALSE,
-                             cplot=FALSE,
-                             Iplot=FALSE,
+                             lplot=TRUE,
+                             cplot=TRUE,
+                             Iplot=TRUE,
                              silent=TRUE,
                              L=0)
 # vitality.4p
 data(swedish_females)
 swe <- swedish_females
-initial_age <- 20 # Could be adjusted up
+initial_age <- 20 # Could be adjusted
 time <- initial_age:max(swedish_females$age)
-survival_fraction <- swe$lx[time] / swe$lx[time[1]]
+survival_fraction <- swe$lx / swe$lx[1]
+survival_fraction <- survival_fraction[time] # when first element <1 data is adjusted
 sample_size <- swe$Lx[initial_age] #sample size
 
 results.4par <- vitality.4p(time = time,
@@ -80,16 +83,16 @@ results.4par <- vitality.4p(time = time,
                             se = sample_size, 
                             datatype = "CUM", 
                             ttol = 1e-06,
-                            pplot = FALSE,
-                            Iplot = FALSE,
-                            Mplot = FALSE,
+                            pplot = TRUE,
+                            Iplot = TRUE,
+                            Mplot = TRUE,
                             tlab = "years",
                             silent = FALSE)
 
 # vitality.6p
 data(swedish_females)
 swe <- swedish_females
-initial_age <- 0 # Could be adjusted up
+initial_age <- 0 
 time <- swedish_females$age
 survival_fraction <- swe$lx / swe$lx[1]
 sample_size <- swe$Lx[1] #sample size
@@ -104,9 +107,9 @@ results.6par <- vitality.6p(time = time,
                             #se = sample_size, 
                             datatype = "CUM", 
                             ttol = 1e-06,
-                            pplot = FALSE,
-                            Iplot = FALSE,
-                            Mplot = FALSE,
+                            pplot = TRUE,
+                            Iplot = TRUE,
+                            Mplot = TRUE,
                             tlab = "years",
                             silent = FALSE)
 }
@@ -114,7 +117,7 @@ results.6par <- vitality.6p(time = time,
   \itemize{
   \item Anderson, J.J. (2000). "A vitality-based model relating stressors and environmental properties to organism survival." Ecological Monographs 70(3):445-470.
   
-  \item Anderson, J.J. and Li, T. (2015). "A two-process mortality model with extensions to juvenile mortality, populations and evolution."
+  \item Anderson, J.J. and Li, T. (2015). "A two-process mortality model with extensions to juvenile mortality, populations and evolution." Population Association of America Annual Meeting 2015 \url{http://paa2015.princeton.edu/abstracts/153144}
     
   \item Li, T. and J.J. Anderson. (2009).  "The
   vitality model: A way to understand population survival

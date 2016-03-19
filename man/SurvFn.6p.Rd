@@ -20,11 +20,11 @@
   \item{alpha}{alpha value}
 }
 \value{
-  cumulative survival proportions at \code{xx}  
+  vector of cumulative survival proportions at \code{xx} from all processes
 }
 \description{
-  Gives the cumulative survival proportions at \code{xx} for a given set of parameter values.
+  Gives the cumulative survival proportions at \code{xx} from all processes for a given set of parameter values.
 }
 \details{Used within \code{\link{vitality.6p}} for estimating model parameters based on the observed cumulative survival function.}
-\seealso{\code{\link{vitality.6p}}, \code{\link{survProbInc.6p}}}
+\seealso{\code{\link{vitality.6p}}, \code{\link{survProbInc.6p}}, \code{\link{SurvFn.in.6p}}, \code{\link{SurvFn.ex.6p}}}
 

@@ -89,5 +89,31 @@ mu.vd1.6p <- function(x, r, s) {
 #' @param alpha alpha value # do we need 1/alpha for this as in the survival function?
 #' @return Extrinsic mortality rate (?)
 mu.vd2.6p <- function(x, r, lambda, beta, gamma, alpha){
-  lambda * exp(-(1 - r * x) / beta) + gamma * exp(-(x/alpha))
+  lambda * exp(-(1 - r * x) / beta) + gamma*exp(-alpha*x)
+}
+
+#' Extrinisc mortality rate -- adult
+#' 
+#' None
+#' 
+#' @param x age
+#' @param r r value
+#' @param lambda lambda value
+#' @param beta beta value
+#' @return Extrinsic mortality rate (?)
+mu.vd3.6p <- function(x, r, lambda, beta){
+  lambda * exp(-(1 - r * x) / beta)
+}
+
+#' Extrinisc mortality rate -- child
+#' 
+#' None
+#' 
+#' @param x age
+#' @param r r value
+#' @param lambda lambda value
+#' @param beta beta value
+#' @return Extrinsic mortality rate (?)
+mu.vd4.6p <- function(x, gamma, alpha){
+  gamma*exp(-alpha*x)
 }

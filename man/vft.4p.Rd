@@ -17,6 +17,6 @@
   vector of densities
 }
 \description{
-  This function is used in the calcualtion of the fitted intrinsic (\code{\link{mu.vd1.4p}}) and total (\code{\link{mu.vd.4p}}) mortality rate in the 4-parameter model.
+  This function is used in the calculation of the fitted intrinsic (\code{\link{mu.vd1.4p}}) and total (\code{\link{mu.vd.4p}}) mortality rate in the 4-parameter model.
 }
 \seealso{\code{\link{ft.4p}}}

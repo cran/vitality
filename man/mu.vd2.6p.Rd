@@ -18,9 +18,9 @@
   \item{alpha}{alpha value}
 }
 \value{
-  Extrinsic age-specific mortality rates
+  Vector of extrinsic age-specific mortality rates at ages \code{x}
 }
 \description{
   Gives the extrinsic age-specific mortality rates for a given set of \code{r} and the extrinsic parameters.
 }
-\seealso{\code{\link{mu.vd.6p}}, \code{\link{mu.vd1.6p}}}
+\seealso{\code{\link{mu.vd.6p}}, \code{\link{mu.vd1.6p}},  \code{\link{mu.vd3.6p}},  \code{\link{mu.vd4.6p}}}

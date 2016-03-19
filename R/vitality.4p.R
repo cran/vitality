@@ -193,11 +193,15 @@ plotting.4p <- function(r.final,
         par(mfrow = c(1, 1))
         len <- length(time)
         tmax <- ext * time[len]
-        plot(time, sfract, xlab = tlab, ylab = "survival fraction",
+        plot(time, sfract/sfract[1], xlab = tlab, ylab = "survival fraction",
              ylim = c(0, 1), xlim = c(min(time), tmax), col = 1)
         xxx <- seq(min(time), tmax, length = 200)
-        lines(xxx, SurvFn.4p(xxx, r.final, s.final, lambda.final, beta.final), col = 2)
+        xxx1 <- c(0, xxx[-1])
+        lines(xxx, SurvFn.4p(xxx1, r.final, s.final, lambda.final, beta.final), col = 2, lwd=2)
+        lines(xxx, SurvFn.in.4p(xx=xxx1, r=r.final, s=s.final), col=3, lwd=2, lty=3)
+        lines(xxx, SurvFn.ex.4p(xx=xxx1, r=r.final, s=s.final, lambda = lambda.final, beta = beta.final), col=4, lwd=2, lty=2)
         title("Cumulative Survival Data and Vitality Model Fitting")
+        legend(x="bottomleft", legend=c("Total", "Intrinsic", "Extrinsic"), lty=c(1, 3, 2), col=c(2,3,4), bty="n", lwd=c(2,2,2))
     } 
     
     if ( Mplot != FALSE) {
@@ -210,25 +214,26 @@ plotting.4p <- function(r.final,
       nLx <- n * lxpn + ndx * nax
       mu.x <- ndx/nLx
       mu.x[length(mu.x)] <- NA
-#         qx <- Ni/sfract
-#         mu.x <- 2 * qx/(2 - qx)
+        # qx <- Ni/sfract
+        # mu.x <- 2 * qx/(2 - qx)
         #win.graph()
         ext <- max(pplot, 1)
         par(mfrow = c(1, 1))
         len <- length(time)
         tmax <- ext * time[len]
         xxx <- seq(min(time), tmax, length = 200)
-        mu.i <- mu.vd1.4p(xxx, r.final, s.final)
-        mu.e <- mu.vd2.4p(xxx, r.final, lambda.final, beta.final)
-        mu.t <- mu.vd.4p(xxx, r.final, s.final, lambda.final, beta.final)
+        xxx1 <- xxx
+        mu.i <- mu.vd1.4p(xxx1, r.final, s.final)
+        mu.e <- mu.vd2.4p(xxx1, r.final, lambda.final, beta.final)
+        mu.t <- mu.vd.4p(xxx1, r.final, s.final, lambda.final, beta.final)
         plot(time, mu.x, xlim = c(time[1], tmax), xlab = tlab, ylab = "estimated mortality rate", log = "y",
              main = "Log Mortality Data and Vitality Model Fitting", ylim=c(min(mu.x,mu.t,na.rm=T),max(mu.x,mu.t,na.rm=T)))
         #plot(xxx, mu.t, xlim = c(0, tmax), xlab = tlab, ylab = "estimated mortality rate", log = "y",
         #    type = "l")
-        lines(xxx, mu.t, lwd=2)
-        lines(xxx, mu.i, col = 4, lty = 2, lwd=1.5)
-        lines(xxx, mu.e, col = 2, lty = 3, lwd=1.5)
-        legend(x="topleft", bty="n", legend=c("Total", "Intrinsic", "Extrinsic"), col=c(1, 4, 2), lty=c(1,2,3), lwd=c(2,rep(1.5,2)))
+        lines(xxx, mu.t, col = 2, lwd=2)
+        lines(xxx, mu.i, col=3, lwd=2, lty=3)
+        lines(xxx, mu.e, col=4, lwd=2, lty=2)
+        legend(x="bottomright", legend=c("data (approximate)", expression(mu[total]), expression(mu[i]), expression(mu[e])), lty=c(NA, 1, 3, 2), pch=c(1,NA,NA,NA), col=c(1,2,3,4), bty="n", lwd=c(1,2,2,2))
     } 
     
     # --Incremental mortality plot
@@ -263,7 +268,45 @@ plotting.4p <- function(r.final,
     #return()	 
 }
 
-
+#' The intrinsic cumulative survival distribution function for 2-process 4-parameter
+#' 
+#' None.
+#' 
+#' @param xx vector of ages
+#' @param r r value
+#' @param s s value
+#' @return vector of FF?
+SurvFn.in.4p <- function(xx, r, s) {
+  yy <- s^2*xx
+  # pnorm is: cumulative prob for the Normal Dist.
+  tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx = 0 is ok.  pnorm(+-Inf) is defined
+  tmp2 <- sqrt(1/yy) * (1 + xx * r)
+  
+  # --safeguard if exponent gets too large.---
+  tmp3 <- 2*r/(s*s)
+  
+  if (tmp3 > 250) {   
+    q <- tmp3/250 
+    
+    if (tmp3 > 1500) {
+      q <- tmp3/500
+    }
+    
+    valueFF <- (1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))#*exp(-lambda*exp(-1/beta)/(1/beta*r)*(exp(1/beta*r*xx)-1))
+    #valueFF <- (1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))*exp(-a/b*(exp(b*xx)-1))  
+  }		    
+  else {
+    valueFF <- (1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))#*exp(-lambda*exp(-1/beta)/(1/beta*r)*(exp(1/beta*r*xx)-1))   #1-G
+    #valueFF <- (1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))*exp(-a/b*(exp(b*xx)-1))   #1-G
+    
+  }
+  if ( all(is.infinite(valueFF)) ) {
+    warning(message = "Inelegant exit caused by overflow in evaluation of survival function.  
+            Check for right-censored data. Try other initial values.")
+  }
+  
+  return(valueFF)	
+  }
 
 #' The cumulative survival distribution function for 2-process 4-parameter
 #' 
@@ -275,7 +318,7 @@ plotting.4p <- function(r.final,
 #' @param lambda lambda value
 #' @param beta beta value
 #' @return vector of FF?
-SurvFn.4p <- function(xx, r, s, lambda, beta) {
+SurvFn.ex.4p <- function(xx, r, s, lambda, beta) {
     yy <- s^2*xx
     # pnorm is: cumulative prob for the Normal Dist.
     tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx = 0 is ok.  pnorm(+-Inf) is defined
@@ -291,12 +334,11 @@ SurvFn.4p <- function(xx, r, s, lambda, beta) {
             q <- tmp3/500
         }
         
-        valueFF <- (1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))*exp(-lambda*exp(-1/beta)/(1/beta*r)*(exp(1/beta*r*xx)-1))
-        #valueFF <- (1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))*exp(-a/b*(exp(b*xx)-1))  
-    }		    
-    else {
-        valueFF <- (1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))*exp(-lambda*exp(-1/beta)/(1/beta*r)*(exp(1/beta*r*xx)-1))   #1-G
-        #valueFF <- (1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))*exp(-a/b*(exp(b*xx)-1))   #1-G
+        #valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +gamma/alpha*(exp(-alpha*xx)-1))
+        valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1))
+    } else {
+      #valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ gamma/alpha*(exp(-alpha*xx)-1))
+      valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)) 
         
     }
     if ( all(is.infinite(valueFF)) ) {
@@ -602,6 +644,33 @@ stdErr.4p <- function(r, s, k, u, x1, x2, Ni, pop) {
     
     #######################
     return(se)
+}
+
+SurvFn.4p <- function(xx,r,s,lambda,beta){
+  yy <- s^2*xx
+  # pnorm is: cumulative prob for the Normal Dist.
+  tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx = 0 is ok.  pnorm(+-Inf) is defined
+  tmp2 <- sqrt(1/yy) * (1 + xx * r)
+  
+  # --safeguard if exponent gets too large.---
+  tmp3 <- 2*r/(s*s)
+  
+  if (tmp3 > 250) {   
+    q <- tmp3/250 
+    
+    if (tmp3 > 1500) {
+      q <- tmp3/500
+    }
+    
+    valueFF <-(1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)) # This requires 1/alpha
+  } else {
+    valueFF <-(1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)) 
+  }
+  if ( all(is.infinite(valueFF)) ) {
+    warning(message="Inelegant exit caused by overflow in evaluation of survival function. Check for right-censored data. Try other initial values.")
+  }
+  
+  return(valueFF)  
 }
 
 

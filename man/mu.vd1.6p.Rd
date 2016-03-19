@@ -12,7 +12,7 @@
   \item{s}{s value}
 }
 \value{
-  Intrinsic age-specific mortality rates
+  Vector of intrinsic age-specific mortality rates at age \code{x}
 }
 \description{
   Gives the intrinsic age-specific mortality rates for a given set of \code{r} and \code{s}, the intrinsic parameters.

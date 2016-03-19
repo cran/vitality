@@ -27,7 +27,7 @@
 }
 \description{
   Function to deal with NAs, right truncated data, and
-  datatype (i.e. cumulative survival or incremental motality).
+  datatype (i.e. cumulative survival or incremental mortality).
 }
 \details{This function is designed for use in the primary vitality model fitting functions in this package. See package documentation.}
 

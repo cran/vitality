@@ -16,7 +16,7 @@
 
   \item{mlv}{TODO mlv}
 
-  \item{time}{time vector giving the ages at which calcualte the estimated value}
+  \item{time}{time vector giving the ages at which calculate the estimated value}
 
   \item{sfract}{observed survival fraction}
 

@@ -148,6 +148,77 @@ vitality.6p <- function(time = 0:(length(sdata)-1),
     }
 }
 
+#' @param xx age
+#' @param r.final r estimate
+#' @param s.final s estimate
+#' @param lambda.final lambda estimate
+#' @param beta.final beta estimate
+#' @param gamma.final gamma estimate
+#' @param alpha.final alpha estimate
+SurvFn.in.6p <-function(xx,r,s) 
+  #  The cumulative survival distribution function.
+{
+  yy<-s^2*xx
+  # pnorm is: cumulative prob for the Normal Dist.
+  tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx=0 is ok.  pnorm(+-Inf) is defined
+  tmp2 <- sqrt(1/yy) * (1 + xx * r)
+  
+  # --safeguard if exponent gets too large.---
+  tmp3 <- 2*r/(s*s)
+  
+  if (tmp3 >250) {   
+    q <-tmp3/250 
+    if (tmp3 >1500) {
+      q <-tmp3/500
+    }  
+    valueFF <-(1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))#*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +gamma/alpha*(exp(-alpha*xx)-1))
+  } else {
+    valueFF <-(1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))#*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ gamma/alpha*(exp(-alpha*xx)-1)) 
+  }
+  if ( all(is.infinite(valueFF)) ) {
+    warning(message="Inelegant exit caused by overflow in evaluation of survival function. Check for right-censored data. Try other initial values.")
+  }
+  
+  return(valueFF)	
+}
+
+#' @param xx age
+#' @param r.final r estimate
+#' @param s.final s estimate
+#' @param lambda.final lambda estimate
+#' @param beta.final beta estimate
+#' @param gamma.final gamma estimate
+#' @param alpha.final alpha estimate
+SurvFn.ex.6p <-function(xx,r,s,lambda,beta,gamma,alpha) 
+  #  The cumulative survival distribution function.
+{
+  alpha <- 1/alpha # need this for inverse in child mortality component added 9-16-2014
+  yy<-s^2*xx
+  # pnorm is: cumulative prob for the Normal Dist.
+  tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx=0 is ok.  pnorm(+-Inf) is defined
+  tmp2 <- sqrt(1/yy) * (1 + xx * r)
+  
+  # --safeguard if exponent gets too large.---
+  tmp3 <- 2*r/(s*s)
+  
+  if (tmp3 >250) {   
+    q <-tmp3/250 
+    if (tmp3 >1500) {
+      q <-tmp3/500
+    }	
+    #valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +gamma/alpha*(exp(-alpha*xx)-1))
+    valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +alpha*gamma*(exp(-xx/alpha)-1))
+  } else {
+    #valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ gamma/alpha*(exp(-alpha*xx)-1))
+    valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ alpha*gamma*(exp(-xx/alpha)-1)) 
+  }
+  if ( all(is.infinite(valueFF)) ) {
+    warning(message="Inelegant exit caused by overflow in evaluation of survival function. Check for right-censored data. Try other initial values.")
+  }
+  
+  return(valueFF)	
+}
+
 
 #' Plotting function for 2-process vitality model. 4-param
 #' 
@@ -189,62 +260,7 @@ plotting.6p <- function(r.final,
                          rc.data) {
     # --plot cumulative survival---
     if (pplot != FALSE) {
-      SurvFn.in.6p <-function(xx,r,s,lambda,beta,mu0,alpha) 
-        #  The cumulative survival distribution function.
-      {
-        yy<-s^2*xx
-        # pnorm is: cumulative prob for the Normal Dist.
-        tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx=0 is ok.  pnorm(+-Inf) is defined
-        tmp2 <- sqrt(1/yy) * (1 + xx * r)
-        
-        # --safeguard if exponent gets too large.---
-        tmp3 <- 2*r/(s*s)
-        
-        if (tmp3 >250) {   
-          q <-tmp3/250 
-          if (tmp3 >1500) {
-            q <-tmp3/500
-          }  
-          valueFF <-(1.-(pnorm(-tmp1) + (exp(tmp3/q) *pnorm(-tmp2)^(1/q))^(q)))#*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +mu0/alpha*(exp(-alpha*xx)-1))
-        } else {
-          valueFF <-(1.-(pnorm(-tmp1) + exp(tmp3) *pnorm(-tmp2)))#*exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ mu0/alpha*(exp(-alpha*xx)-1)) 
-        }
-        if ( all(is.infinite(valueFF)) ) {
-          warning(message="Inelegant exit caused by overflow in evaluation of survival function. Check for right-censored data. Try other initial values.")
-        }
-        
-        return(valueFF)	
-      }
       
-      SurvFn.ex.6p <-function(xx,r,s,lambda,beta,mu0,alpha) 
-        #  The cumulative survival distribution function.
-      {
-        alpha <- 1/alpha # need this for inverse in child mortality component added 9-16-2014
-        yy<-s^2*xx
-        # pnorm is: cumulative prob for the Normal Dist.
-        tmp1 <- sqrt(1/yy) * (1 - xx * r)    #  xx=0 is ok.  pnorm(+-Inf) is defined
-        tmp2 <- sqrt(1/yy) * (1 + xx * r)
-        
-        # --safeguard if exponent gets too large.---
-        tmp3 <- 2*r/(s*s)
-        
-        if (tmp3 >250) {   
-          q <-tmp3/250 
-          if (tmp3 >1500) {
-            q <-tmp3/500
-          }	
-          #valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +mu0/alpha*(exp(-alpha*xx)-1))
-          valueFF <- exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1) +alpha*mu0*(exp(-xx/alpha)-1))
-        } else {
-          #valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ mu0/alpha*(exp(-alpha*xx)-1))
-          valueFF <-exp(-lambda*exp(-1/beta)/(r/beta)*(exp(r*xx/beta)-1)+ alpha*mu0*(exp(-xx/alpha)-1)) 
-        }
-        if ( all(is.infinite(valueFF)) ) {
-          warning(message="Inelegant exit caused by overflow in evaluation of survival function. Check for right-censored data. Try other initial values.")
-        }
-        
-        return(valueFF)	
-      }
         #win.graph()
         ext <- max(pplot, 1)
         par(mfrow = c(1, 1))
@@ -253,11 +269,11 @@ plotting.6p <- function(r.final,
         plot(time, sfract, xlab = tlab, ylab = "survival fraction",
              ylim = c(0, 1), xlim = c(time[1], tmax), col = 1)
         xxx <- seq(0, tmax, length = 200)
-        lines(xxx, SurvFn.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final), col = 1, lwd=2)
-        lines(xxx, SurvFn.in.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final), col=4, lwd=1.5, lty=2)
-        lines(xxx, SurvFn.ex.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final), col=2, lwd=1.5, lty=4)
+        lines(xxx, SurvFn.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final), col = 2, lwd=2)
+        lines(xxx, SurvFn.in.6p(xxx, r.final, s.final), col=3, lwd=2, lty=3)
+        lines(xxx, SurvFn.ex.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final), col=4, lwd=2, lty=2)
         title("Cumulative Survival Data and Vitality Model Fitting")
-        legend(x="bottomleft", bty="n", legend=c("Total", "Intrinsic", "Extrinsic"), lty=c(1,2,4), lwd=c(2,1.5,1.5), col=c(1,4,2))
+        legend(x="bottomleft", bty="n", legend=c("Total", "Intrinsic", "Extrinsic"), lty=c(1,3,2), lwd=c(2,2,2), col=c(2,3,4))
     } 
     
     if ( Mplot != FALSE) {
@@ -270,8 +286,8 @@ plotting.6p <- function(r.final,
       nLx <- n * lxpn + ndx * nax
       mu.x <- ndx/nLx
       mu.x[length(mu.x)] <- NA
-        #qx <- Ni/sfract
-        #mu.x <- 2 * qx/(2 - qx)
+#         qx <- Ni/sfract
+#         mu.x <- 2 * qx/(2 - qx)
         #win.graph()
         ext <- max(pplot, 1)
         par(mfrow = c(1, 1))
@@ -280,17 +296,18 @@ plotting.6p <- function(r.final,
         xxx <- seq(0, tmax, length = 200)
         mu.i <- mu.vd1.6p(xxx, r.final, s.final)
         mu.e <- mu.vd2.6p(xxx, r.final, lambda.final, beta.final, gamma.final, alpha.final)
+        mu.ea <- mu.vd3.6p(xxx, r.final, lambda.final, beta.final)
+        mu.ec <- mu.vd4.6p(xxx, gamma.final, alpha.final)
         mu.t <- mu.vd.6p(xxx, r.final, s.final, lambda.final, beta.final, gamma.final, alpha.final)
         plot(time, mu.x, xlim = c(time[1], tmax), xlab = tlab, ylab = "estimated mortality rate", log = "y",
              main = "Log Mortality Data and Vitality Model Fitting", ylim=c(min(mu.x, mu.t,na.rm=T),max(mu.x, mu.t,na.rm=T)))
         #plot(xxx, mu.t, xlim = c(0, tmax), xlab = tlab, ylab = "estimated mortality rate", log = "y",
         #    type = "l")
-        lines(xxx, mu.t, lwd=2)
-        lines(xxx, mu.i, col = 4, lty = 2, lwd=1.5)
-        #lines(xxx, mu.e, col = 3, lty = 3, lwd=1.25)
-        lines(xxx, (gamma.final * exp(-(xxx/alpha.final))), col=3, lty=3, lwd=1.5)
-        lines(xxx, (lambda.final * exp(-(1 - r.final * xxx) / beta.final)), col=2, lty=4, lwd=1.5)
-        legend(x="topleft", bty="n", legend=c("Total", "Intrinsic", "Extrinsic:Child", "Extrinsic:Adult"), col=c(1, 4, 3, 2), lty=c(1,2,3,4), lwd=c(2,rep(1.5,3)))
+        lines(xxx, mu.t, lwd=2, col=2)
+        lines(xxx, mu.i, col = 3, lty = 3, lwd=2)
+        lines(xxx, mu.ea, col=4, lty=2, lwd=2)
+        lines(xxx, mu.ec, col=5, lty=4, lwd=2)
+        legend(x="bottomright", legend=c("data (approximate)", expression(mu[total]),expression(mu[i]),expression(mu["e,a"]),expression(mu["e,c"])), lty=c(NA,1,3,2,4), pch=c(1,NA,NA,NA,NA), col=c(1,2,3,4,5), lwd=c(1,rep(2,4)), bty="n")
     } 
     
     # --Incremental mortality plot
