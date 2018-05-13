@@ -1,4 +1,4 @@
-## Three parameter simple model r s k, no childhood hook
+## Three parameter simple model r s k, no childhood hook 
 
 #' Fitting routine for the 2-process, 3-parameter vitality model. 
 #' 
@@ -125,7 +125,7 @@ vitality.k <- function(time,sdata,rc.data=F,se=F,gfit=F,datatype="CUM",ttol=.000
         stop("time and sdata must have the same length")
     }
     in.time <- time
-    dTmp <- dataPrep(time, sdata, datatype, rc.data)
+    dTmp <- dataPrep(time, sdata, datatype, rc.data) 
     time <- dTmp$time
     sfract <- dTmp$sfract
     x1 <- dTmp$x1
@@ -138,9 +138,9 @@ vitality.k <- function(time,sdata,rc.data=F,se=F,gfit=F,datatype="CUM",ttol=.000
       x1 <- c(x1[-c(1,length(x1))], x1[1])
       x2 <- c(x2[-c(1,length(x2))], 0)
       Ni <- Ni[-1]
-      rc.data <- rc.data[-1]
+     # rc.data <- rc.data[-1] # need only single value for rc.data NOT eliminate the first value.
     }
-    
+   rc.data <- rc.data[1] ; # WNB only use the first value, this was replicated to fill the dataframe in dataPrep    
     
     #  --Produce initial parameter values---
     tt <- time

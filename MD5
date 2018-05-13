@@ -1,4 +1,4 @@
-b90df949095eebe6591b6e52675e02dd *DESCRIPTION
+1bdab65dbd9156127b036b0da6ae4403 *DESCRIPTION
 82c6ac118dc10cd2d027b94cbed8a440 *NAMESPACE
 874a7f06af49f1e1686abcbeee244ac4 *R/dataPrep.R
 63a907b03bf5293207da753c00f8aab2 *R/data_documentation.R
@@ -7,8 +7,8 @@ bc70db3dbd941025aa94cf8f6afa8697 *R/mortality_rate.R
 473da11d11dcf66d988a21b72fa1108f *R/package_documentation.R
 1fc307820a9fdbaaed3299838b22e42f *R/vitality.4p.R
 8d93b83155d422292016a1f2046a9b66 *R/vitality.6p.R
-970975f82a503d3d2326c466e08b6c1b *R/vitality.k.R
-f1e6281f83c97dec597ee1b2127ade5a *R/vitality.ku.R
+071cd480147b11f50d192d83ab9cf18a *R/vitality.k.R
+35927472652386fea4618c90103cfdf9 *R/vitality.ku.R
 4b48e797d2358e0d2c543d9713dd1187 *R/vitality.utils.R
 b69b2ac5b5f11ddb0631501b3e1a5c27 *data/daphnia.rda
 03cc7bb6a31d725f4f9fdedcb84be6a4 *data/rainbow_trout_for_k.rda

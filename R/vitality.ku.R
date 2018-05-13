@@ -1,7 +1,7 @@
 vitality.ku<-function(time,sdata,rc.data=F,se=F,gfit=F,datatype="CUM",ttol=.000001,
                       init.params=F,lower=c(0,-1,0,0),upper=c(100,100,50,50),pplot=T,
                       tlab="days",lplot=F,cplot=F,Iplot=F,silent=F,L=0){
-# 
+#
 #
 #  Vitality based survival model: parameter fitting routine:    VERSION: 10/12/2007; DS 2014/11/17
 #
